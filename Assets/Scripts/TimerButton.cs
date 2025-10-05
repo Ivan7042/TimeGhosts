@@ -6,11 +6,11 @@ public class TimerButton : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) // ghost has "Player" tag
+        if (other.CompareTag("Ghost")) // only ghost can activate
         {
             // Remember the location of the button so the player can respawn there
             phaseManager.SetPlayerSpawnPoint(transform.position);
-            phaseManager.BeginRecording(); // tell GamePhaseManager to start ghost phase
+            phaseManager.BeginRecording(this.gameObject.transform.position); // tell GamePhaseManager to start ghost phase
             Destroy(gameObject); // remove button after use
         }
     }

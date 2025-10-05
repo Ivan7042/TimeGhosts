@@ -17,6 +17,12 @@ public class CountdownTimer : MonoBehaviour
         this.enabled = true;
     }
 
+    public void StopTimer()
+    {
+        isRunning = false;
+        this.enabled = false;
+    }
+
     void Update()
     {
         if (!isRunning) return;

@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 9054225531510543176}
   - component: {fileID: -4310591256770872414}
   - component: {fileID: 7154106681076185681}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GhostPlayer
-  m_TagString: Player
+  m_TagString: Ghost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

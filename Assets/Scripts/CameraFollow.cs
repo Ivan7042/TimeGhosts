@@ -3,27 +3,55 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [Header("Follow Settings")]
-    public Transform target; // The target the camera will follow
-    public Vector3 offset = new Vector3(0f, 5f, -1f); // Position offset
-    public Vector3 rotationOffset = new Vector3(25f, 0f, 0f); // Rotation offset (Euler angles)
-    public float smoothSpeed = 0.125f; // Position smoothing speed
-    public float rotationSmoothSpeed = 5f; // Rotation smoothing speed
+    public Transform target;
+    public Vector3 offset = new Vector3(0f, 3f, -6f);
+    public float followSmoothSpeed = 0.1f;
+
+    [Header("Rotation Settings")]
+    public float mouseSensitivity = 100f;  // Mouse speed
+    public float minPitch = -20f;           // Clamp limits for looking up/down
+    public float maxPitch = 60f;
+    public float rotationSmoothSpeed = 8f;
+
+    private float yaw = 0f;   // Horizontal rotation
+    private float pitch = 10f; // Vertical tilt (starts slightly downward)
+    private float currentYaw;
+    private float currentPitch;
+
+    void Start()
+    {
+        // Optional: lock cursor to center for camera control
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
     void LateUpdate()
     {
         if (target == null) return;
 
-        // Smooth position
-        Vector3 desiredPosition = target.position + offset;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-        transform.position = smoothedPosition;
+        HandleMouseInput();
 
-        // Smooth rotation
-        Quaternion desiredRotation = Quaternion.Euler(rotationOffset);
-        transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSmoothSpeed);
+        // Smooth rotation interpolation
+        currentYaw = Mathf.Lerp(currentYaw, yaw, Time.deltaTime * rotationSmoothSpeed);
+        currentPitch = Mathf.Lerp(currentPitch, pitch, Time.deltaTime * rotationSmoothSpeed);
 
-        // Always face the target (optionally with tilt)
-        transform.LookAt(target.position + Vector3.up * 1.5f); // Aim slightly above center if you want
+        // Calculate rotation
+        Quaternion rotation = Quaternion.Euler(currentPitch, currentYaw, 0f);
+        Vector3 desiredPosition = target.position + rotation * offset;
+
+        // Smoothly move the camera
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, followSmoothSpeed);
+        transform.LookAt(target.position + Vector3.up * 1.5f);
+    }
+
+    private void HandleMouseInput()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
+        yaw += mouseX;
+        pitch -= mouseY;
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
     }
 
     public void SetTarget(Transform newTarget)

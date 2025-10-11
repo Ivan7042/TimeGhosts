@@ -29,11 +29,13 @@ public class RoomManager : MonoBehaviour
                 roomBehaviours.Add(behaviour);
         }
 
-        // Room starts frozen
-        SetRoomActive(false);
-
         var col = GetComponent<Collider>();
         if (col != null) col.isTrigger = true;
+    }
+
+    private void Start()
+    {
+        SetRoomActive(false);
     }
 
     public float GetGhostPhaseDuration() => ghostPhaseDuration;

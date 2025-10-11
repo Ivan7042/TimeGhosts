@@ -9,19 +9,31 @@ public class CountdownTimer : MonoBehaviour
     private bool isRunning = false;
     private float timeRemaining;
 
-    // Called externally to start countdown
+    // Start the timer (optional custom duration)
     public void StartTimer(float customDuration = -1f)
     {
         timeRemaining = (customDuration > 0) ? customDuration : duration;
         isRunning = true;
         this.enabled = true;
+        UpdateDisplay();
     }
 
+    // Stop the timer (pause)
     public void StopTimer()
     {
         isRunning = false;
         this.enabled = false;
     }
+
+    // Fully reset timer display
+    public void ResetTimer()
+    {
+        StopTimer();
+        timeRemaining = 0f;
+        UpdateDisplay();
+    }
+
+    public float GetTimeRemaining() => timeRemaining;
 
     void Update()
     {
@@ -36,7 +48,13 @@ public class CountdownTimer : MonoBehaviour
             this.enabled = false; // disable ticking
         }
 
+        UpdateDisplay();
+    }
+
+    private void UpdateDisplay()
+    {
         int seconds = Mathf.CeilToInt(timeRemaining);
-        timerText.text = seconds.ToString();
+        if (timerText != null)
+            timerText.text = seconds.ToString();
     }
 }
